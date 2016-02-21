@@ -77,7 +77,7 @@ def loadForecast():
     d_end=d+datetime.timedelta(hours=12, minutes=15)
 
     data = {}
-    data['place']='Kajaani'
+    data['place']='Oulu'
     data['starttime']=d_start.strftime("%Y-%m-%dT%H:%M:00Z")
     data['endtime']=d_end.strftime("%Y-%m-%dT%H:%M:00Z")
     data['timestep']=15
