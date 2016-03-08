@@ -5,7 +5,7 @@
 #export DISPLAY=:0 #needed if you are running a simple gui app.
 
 process="serialwrite.py"
-makerun="/home/user/workspace/arduino/pirdulcd/serialwrite.py"
+makerun="/home/tomi/workspace/arduino/pirdulcd/serialwrite.py $(cat /home/tomi/workspace/arduino/pirdulcd/key.txt)"
 
 if ps ax | grep -v grep | grep $process > /dev/null
 then
