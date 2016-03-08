@@ -1,7 +1,11 @@
 #!/usr/bin/python
+import sys
 import serial
 import time
 import fmidata
+
+#Give the fmi apikey as an argument.
+
 # open serial connection
 # note, also works from bash shell:
 # echo -n "hello world!" > /dev/ttyACM0
@@ -21,11 +25,11 @@ time.sleep(1)
 #    time.sleep(0.5)
 while 1:
     # Read the page and set variables just onc
-    fmidata.loadCurrent()
+    fmidata.loadCurrent(sys.argv[1])
     t_val=fmidata.currentTemperature()
     feelslike_val=fmidata.feelslikeTemperature()
     #todennakoisyys alk. 27.5.2015
-    fmidata.loadForecast()
+    fmidata.loadForecast(sys.argv[1])
     rain_amount=fmidata.rainAmount()
     forecast_temp=fmidata.forecastTemperature()
     
@@ -43,20 +47,30 @@ while 1:
 	if (10 > min_val):
 	    min_string='0%d' % min_val
 	else:
-	   min_string='%d' % min_val
-        ser.write('0%s:%s %sC    \0' % (hour_string, min_string, t_val))
+	   min_string='%d' % min_val	
+	str = '0%s:%s %sC     \0' % (hour_string, min_string, t_val)
+        print str #debug
+	ser.write(str)
         time.sleep(0.5)
-        ser.write('1Tuntuu kuin:%sC    \0' % (feelslike_val))
+	str = '1Tuntuu kuin:%sC    \0' % (feelslike_val)
+	print str #debug
+        ser.write(str)
         # sleep defines how long one screen is displayed
         time.sleep(10)
         forecast_hour=(hour_val+12)%24
 	if (12 >= hour_val):
-            ser.write('0Klo %d:%sC      \0' % (forecast_hour, forecast_temp))
+	    str = '0Klo %d:%sC      \0' % (forecast_hour, forecast_temp)
+            print str #debug
+            ser.write(str)
         else:
-            ser.write('0H.klo %d:%sC    \0'  % (forecast_hour, forecast_temp))
+	    str = '0H.klo %d:%sC    \0'  % (forecast_hour, forecast_temp)
+            print str #debug
+            ser.write(str)
 	
 	time.sleep(0.5)
-        ser.write('1%s\0' % (rain_amount))
+        str = '1%s   \0' % (rain_amount)
+        print str #debug
+        ser.write('1%s   \0' % (rain_amount))
         # sleep defines how long one screen is displayed
 	#print rain_amount
         time.sleep(10)
