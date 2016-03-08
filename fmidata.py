@@ -14,7 +14,7 @@ __WVal = 99
 __FTVal = 99
 __FRVal = 99
 
-def loadCurrent():
+def loadCurrent(apikey):
     global __page
     global __xml_current
     global __xml_forecast
@@ -28,7 +28,7 @@ def loadCurrent():
     d_end=d-datetime.timedelta(minutes=1)
 
     data = {}
-    data['place']='Oulu'
+    data['place']='Kajaani'
     data['starttime']=d_start.strftime("%Y-%m-%dT%H:%M:00Z")
     data['endtime']=d_end.strftime("%Y-%m-%dT%H:%M:00Z")
     data['timestep']=1
@@ -36,7 +36,9 @@ def loadCurrent():
     #url_values=urllib.urlencode(data)
     #print url_values
 
-    url='http://data.fmi.fi/fmi-apikey/[INSERT_THE_API_KEY_HERE]/wfs?request=getFeature&storedquery_id=fmi::observations::weather::simple'
+    url = 'http://data.fmi.fi/fmi-apikey/'
+    url = url + apikey
+    url = url + '/wfs?request=getFeature&storedquery_id=fmi::observations::weather::simple'
 
     full_url=url + '&' + "place=%s&starttime=%s&endtime=%s&timestep=%s" % (data['place'], data['starttime'], data['endtime'], data['timestep'])
 
@@ -66,7 +68,7 @@ def loadCurrent():
 
     return 0
 
-def loadForecast():
+def loadForecast(apikey):
 
     global __FTVal
     global __FRVal
@@ -77,7 +79,7 @@ def loadForecast():
     d_end=d+datetime.timedelta(hours=12, minutes=15)
 
     data = {}
-    data['place']='Oulu'
+    data['place']='Kajaani'
     data['starttime']=d_start.strftime("%Y-%m-%dT%H:%M:00Z")
     data['endtime']=d_end.strftime("%Y-%m-%dT%H:%M:00Z")
     data['timestep']=15
@@ -85,7 +87,9 @@ def loadForecast():
     #url_values=urllib.urlencode(data)
     #print url_values
 
-    url='http://data.fmi.fi/fmi-apikey/[INSERT-THE-API-KEY-HERE]/wfs?request=getFeature&storedquery_id=fmi::forecast::hirlam::surface::point::simple'
+    url = 'http://data.fmi.fi/fmi-apikey/'
+    url = url + apikey
+    url = url + '/wfs?request=getFeature&storedquery_id=fmi::forecast::hirlam::surface::point::simple'
 
     full_url=url + '&' + "place=%s&starttime=%s&endtime=%s&timestep=%s" % (data['place'], data['starttime'], data['endtime'], data['timestep'])
 
@@ -123,7 +127,11 @@ def feelslikeTemperature():
     TVal = float(__TVal)
     WVal = float(__WVal)
     #https://fi.wikipedia.org/wiki/Pakkasen_purevuus
-    tempVal = 13.12+0.6215*TVal-13.956*pow(WVal,0.16)+0.4867*TVal*pow(WVal,0.16)
+    if (WVal != 0):
+    	tempVal = 13.12+0.6215*TVal-13.956*pow(WVal,0.16)+0.4867*TVal*pow(WVal,0.16)
+    else:
+	# formula above does not work if windspeed = 0
+	tempVal = TVal
     tempStr = "%.1f" % tempVal
     return tempStr
  
